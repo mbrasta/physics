@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>فرمول‌های میدان مغناطیسی و الکتریکی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <header class="bg-blue-700 text-white p-4 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">فرمول‌های فیزیک</h1>
+    <nav class="space-x-4">
+      <button onclick="filterCards('all')" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded">همه</button>
+      <button onclick="filterCards('magnetic')" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded">میدان مغناطیسی</button>
+      <button onclick="filterCards('electric')" class="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded">میدان الکتریکی</button>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main id="cardsContainer" class="flex-grow p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Cards will be injected by JavaScript -->
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-2xl shadow-lg w-11/12 md:w-2/3 lg:w-1/2 relative animate__animated animate__fadeIn">
+      <button onclick="closeModal()" class="absolute top-3 left-4 text-gray-400 hover:text-black text-3xl">&times;</button>
+      <h2 id="modalTitle" class="text-xl font-bold mb-4"></h2>
+      <div id="modalFormula" class="text-2xl text-center mb-4"></div>
+      <p id="modalBody" class="text-gray-700 text-right"></p>
+      <div id="modalExample" class="text-right mt-4 text-lg text-gray-800"></div>
+
+      <div class="flex justify-between mt-6">
+        <button onclick="prevFormula()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">فرمول قبلی</button>
+        <button onclick="nextFormula()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded">فرمول بعدی</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const formulas = [
+      {
+        title: "نیروی مغناطیسی روی بار متحرک",
+        formula: "\\( F = |q| v B \\sin \\theta \\)",
+        details: "q: مقدار بار الکتریکی<br>v: سرعت حرکت بار<br>B: شدت میدان مغناطیسی<br>θ: زاویه بین v و B",
+        example: "فرض کنید بار الکتریکی q = 1 کولن و سرعت v = 5 متر بر ثانیه باشد. میدان مغناطیسی B = 2 تسلا و زاویه θ = 30 درجه است. نیروی مغناطیسی چگونه محاسبه می‌شود؟<br><br>حل:<br>\\[ F = |1| × 5 × 2 × \\sin 30^{\\circ} = 5 \\text{ نیوتن} \\]",
+        category: "magnetic"
+      },
+      {
+        title: "نیروی مغناطیسی روی سیم حامل جریان",
+        formula: "\\( F = I l B \\sin \\theta \\)",
+        details: "I: جریان الکتریکی<br>l: طول سیم<br>B: شدت میدان مغناطیسی<br>θ: زاویه بین سیم و میدان",
+        example: "فرض کنید جریان I = 3 آمپر، طول سیم l = 2 متر و میدان مغناطیسی B = 1 تسلا و زاویه θ = 90 درجه باشد. نیروی مغناطیسی را محاسبه کنید.<br><br>حل:<br>\\[ F = 3 × 2 × 1 × \\sin 90^{\\circ} = 6 \\text{ نیوتن} \\]",
+        category: "magnetic"
+      },
+      {
+        title: "میدان مغناطیسی در مرکز حلقه",
+        formula: "\\( B = \\frac{\\mu_0 I}{2R} \\)",
+        details: "μ₀: تراوایی مغناطیسی خلأ<br>I: شدت جریان<br>R: شعاع حلقه",
+        example: "فرض کنید شدت جریان I = 10 آمپر و شعاع حلقه R = 0.1 متر باشد. میدان مغناطیسی در مرکز حلقه را محاسبه کنید.<br><br>حل:<br>\\[ B = \\frac{4 \\pi × 10^{-7} × 10}{2 × 0.1} = 6.28 × 10^{-5} \\text{ تسلا} \\]",
+        category: "magnetic"
+      },
+      {
+        title: "میدان مغناطیسی درون سیم‌پیچ تخت",
+        formula: "\\( B = \\frac{\\mu_0 N I}{2R} \\)",
+        details: "μ₀: تراوایی مغناطیسی خلأ<br>N: تعداد دور<br>I: جریان<br>R: شعاع",
+        example: "فرض کنید تعداد دور سیم‌پیچ N = 100، جریان I = 5 آمپر و شعاع R = 0.2 متر باشد. میدان مغناطیسی را محاسبه کنید.<br><br>حل:<br>\\[ B = \\frac{4 \\pi × 10^{-7} × 100 × 5}{2 × 0.2} = 1.57 × 10^{-4} \\text{ تسلا} \\]",
+        category: "magnetic"
+      },
+      {
+        title: "شار مغناطیسی",
+        formula: "\\( \\Phi = B A \\cos \\theta \\)",
+        details: "B: شدت میدان مغناطیسی<br>A: مساحت سطح<br>θ: زاویه بین میدان و عمود سطح",
+        example: "فرض کنید میدان مغناطیسی B = 2 تسلا و مساحت سطح A = 0.5 متر مربع و زاویه θ = 0 درجه باشد. شار مغناطیسی را محاسبه کنید.<br><br>حل:<br>\\[ \\Phi = 2 × 0.5 × \\cos 0^{\\circ} = 1 \\text{ وبرد} \\]",
+        category: "magnetic"
+      },
+      {
+        title: "قانون فاراده",
+        formula: "\\( \\xi_{av} = -N \\frac{\\Delta \\Phi}{\\Delta t} \\)",
+        details: "ξₐᵥ: نیروی محرکه القایی<br>N: تعداد دور<br>ΔΦ: تغییر شار<br>Δt: تغییر زمان",
+        example: "فرض کنید تعداد دور N = 200، تغییر شار ΔΦ = 0.1 وبرد و تغییر زمان Δt = 0.5 ثانیه باشد. نیروی محرکه القایی را محاسبه کنید.<br><br>حل:<br>\\[ \\xi_{av} = -200 × \\frac{0.1}{0.5} = -40 \\text{ ولت} \\]",
+        category: "electric"
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function renderCards() {
+      const container = document.getElementById('cardsContainer');
+      container.innerHTML = '';
+      formulas.forEach((f, index) => {
+        container.innerHTML += `
+          <div onclick="openModal(${index})" class="card ${f.category} bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer">
+            <h2 class="text-xl font-semibold mb-4">${f.title}</h2>
+            <p class="text-center text-lg text-gray-700">${f.formula}</p>
+          </div>
+        `;
+      });
+      MathJax.typesetPromise();
+    }
+
+    function filterCards(category) {
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        if (category === 'all' || card.classList.contains(category)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function openModal(index) {
+      currentIndex = index;
+      updateModal();
+      document.getElementById('modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
+
+    function updateModal() {
+      const formula = formulas[currentIndex];
+      document.getElementById('modalTitle').innerHTML = formula.title;
+      document.getElementById('modalFormula').innerHTML = formula.formula;
+      document.getElementById('modalBody').innerHTML = formula.details;
+      document.getElementById('modalExample').innerHTML = formula.example;
+      MathJax.typesetPromise();
+    }
+
+    function prevFormula() {
+      currentIndex = (currentIndex - 1 + formulas.length) % formulas.length;
+      updateModal();
+    }
+
+    function nextFormula() {
+      currentIndex = (currentIndex + 1) % formulas.length;
+      updateModal();
+    }
+
+    renderCards();
+  </script>
+
+</body>
+</html>
